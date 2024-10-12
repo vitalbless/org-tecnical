@@ -8,22 +8,26 @@ generator client {
 }
 
 model User {
-  id       Int      @id @default(autoincrement())
-  fio      String
-  phone    String
-  login    String   @unique
-  password String
-  type     String
+  id         Int      @id @default(autoincrement())
+  firstName  String
+  lastName   String
+  patronymic String?
+  phone      String
+  login      String   @unique
+  password   String
+  type       String 
 
-  comments Comment[]
+  comments   Comment[]
 
-  master Request[] @relation("MasterRequests")
+  masterRequests Request[] @relation("MasterRequests")
 
-  client Request[] @relation("ClientRequests")
+  clientRequests Request[] @relation("ClientRequests")
+
+  managerRequests Request[] @relation("ManagerRequests")
 }
 
 model Request {
-  id               Int      @id @default(autoincrement())
+  id               Int       @id @default(autoincrement())
   startDate        DateTime  @default(now())
   orgTechType      String
   orgTechModel     String
@@ -31,12 +35,15 @@ model Request {
   requestStatus    String
   completionDate   DateTime?
   repairParts      String?
-  
-  master     User?    @relation("MasterRequests", fields: [masterId], references: [id])
-  masterId   Int?
 
-  client     User     @relation("ClientRequests", fields: [clientId], references: [id])
-  clientId   Int
+  master    User?   @relation("MasterRequests", fields: [masterId], references: [id], onDelete: SetNull)
+  masterId  Int?
+
+  client    User    @relation("ClientRequests", fields: [clientId], references: [id], onDelete: Cascade)
+  clientId  Int
+
+  manager   User?   @relation("ManagerRequests", fields: [managerId], references: [id], onDelete: SetNull)
+  managerId Int?
 
   comments  Comment[]
 }
@@ -44,8 +51,10 @@ model Request {
 model Comment {
   id        Int      @id @default(autoincrement())
   message   String
-  master    User     @relation(fields: [masterId], references: [id])
+
+  master    User     @relation(fields: [masterId], references: [id], onDelete: Cascade)
   masterId  Int
-  request   Request  @relation(fields: [requestId], references: [id])
+
+  request   Request  @relation(fields: [requestId], references: [id], onDelete: Cascade)
   requestId Int
 }

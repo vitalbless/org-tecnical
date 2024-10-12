@@ -25,25 +25,13 @@ const addComment = async (req, res) => {
   }
 };
 
-const getCommentsByRequest = async (req, res) => {
-  try {
-    const { requestId } = req.params;
-    const comments = await prisma.comment.findMany({
-      where: { requestId: Number(requestId) },
-    });
-    res.json(comments);
-  } catch (error) {
-    res.status(500).json({ error: 'Ошибка получения комментариев' });
-  }
-};
-
 const updateComment = async (req, res) => {
   try {
-    const { commentId } = req.params;
+    const { id } = req.params;
     const { message } = req.body;
 
     const comment = await prisma.comment.findUnique({
-      where: { commentID: Number(commentId) },
+      where: { id: Number(id) },
     });
 
     if (!comment || comment.masterId !== req.user.userId) {
@@ -54,7 +42,7 @@ const updateComment = async (req, res) => {
     }
 
     const updatedComment = await prisma.comment.update({
-      where: { commentID: Number(commentId) },
+      where: { id: Number(id) },
       data: { message },
     });
 
@@ -65,6 +53,5 @@ const updateComment = async (req, res) => {
 };
 module.exports = {
   addComment,
-  getCommentsByRequest,
   updateComment,
 };

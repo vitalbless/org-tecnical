@@ -1,7 +1,7 @@
 const express = require('express');
 const {
   addComment,
-  getCommentsByRequest,
+
   updateComment,
 } = require('../controllers/commentController');
 const {
@@ -11,12 +11,6 @@ const {
 const router = express.Router();
 
 router.post('/add', authMiddleware, masterRoleMiddleware, addComment);
-router.get('/request/:requestId', authMiddleware, getCommentsByRequest);
-router.put(
-  '/update/:commentId',
-  authMiddleware,
-  masterRoleMiddleware,
-  updateComment
-);
+router.put('/update/:id', authMiddleware, masterRoleMiddleware, updateComment);
 
 module.exports = router;

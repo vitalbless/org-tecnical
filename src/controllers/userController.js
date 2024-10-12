@@ -5,8 +5,16 @@ const prisma = new PrismaClient();
 
 exports.registerUser = async (req, res) => {
   try {
-    const { fio, phone, login, password, type } = req.body;
-
+    const { firstName, lastName, patronymic, phone, login, password, type } =
+      req.body;
+    if (type !== 'Мастер' && type !== 'Клиент' && type !== 'Менеджер') {
+      return res
+        .status(400)
+        .json({
+          error:
+            'Неверный тип пользователя. Доступные типы: Мастер, Клиент, Менеджер',
+        });
+    }
     const existingUser = await prisma.user.findUnique({
       where: { login },
     });
@@ -21,7 +29,9 @@ exports.registerUser = async (req, res) => {
 
     const newUser = await prisma.user.create({
       data: {
-        fio,
+        firstName,
+        lastName,
+        patronymic,
         phone,
         login,
         password: hashedPassword,
