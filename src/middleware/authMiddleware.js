@@ -20,4 +20,13 @@ const authMiddleware = (req, res, next) => {
   }
 };
 
-module.exports = authMiddleware;
+const masterRoleMiddleware = (req, res, next) => {
+  if (req.user.type !== 'Мастер') {
+    return res.status(403).json({
+      error: 'Доступ запрещен. Только мастера могут выполнять это действие.',
+    });
+  }
+  next();
+};
+
+module.exports = { authMiddleware, masterRoleMiddleware };

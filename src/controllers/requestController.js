@@ -3,16 +3,10 @@ const prisma = new PrismaClient();
 
 const createRequest = async (req, res) => {
   try {
-    const {
-      startDate,
-      orgTechType,
-      orgTechModel,
-      problemDescryption,
-      clientId,
-    } = req.body;
+    const { orgTechType, orgTechModel, problemDescryption } = req.body;
+    const clientId = req.user.userId;
     const newRequest = await prisma.request.create({
       data: {
-        startDate,
         orgTechType,
         orgTechModel,
         problemDescryption,
@@ -26,34 +20,6 @@ const createRequest = async (req, res) => {
   }
 };
 
-const getRequests = async (req, res) => {
-  try {
-    const requests = await prisma.request.findMany({
-      include: { master: true, client: true },
-    });
-
-    res.status(200).json(requests);
-  } catch (error) {
-    res.status(500).json({ error: 'Ошибка при получении списка заявок' });
-  }
-};
-const getRequest = async (req, res) => {
-  try {
-    const { id } = req.params;
-    const request = await prisma.request.findUnique({
-      where: { requestID: parseInt(id) },
-      include: { master: true, client: true },
-    });
-
-    if (!request) {
-      return res.status(404).json({ error: 'Заявка не найдена' });
-    }
-
-    res.status(200).json(request);
-  } catch (error) {
-    res.status(500).json({ error: 'Ошибка при получении данных заявки' });
-  }
-};
 const updateRequestStatus = async (req, res) => {
   try {
     const { id } = req.params;
@@ -65,17 +31,6 @@ const updateRequestStatus = async (req, res) => {
     res.json(updatedRequest);
   } catch (error) {
     res.status(500).json({ error: 'Ошибка обновления статуса заявки' });
-  }
-};
-const deleteRequest = async (req, res) => {
-  try {
-    const { id } = req.params;
-    await prisma.request.delete({
-      where: { requestID: parseInt(id) },
-    });
-    res.status(200).json({ message: 'Заявка успешно удалена' });
-  } catch (error) {
-    res.status(500).json({ error: 'Ошибка при удалении заявки' });
   }
 };
 
@@ -147,10 +102,7 @@ const generateCompletedRequestsReport = async (req, res) => {
 };
 module.exports = {
   createRequest,
-  getRequests,
-  getRequest,
   updateRequestStatus,
-  deleteRequest,
   assignMasterToRequest,
   generateCompletedRequestsReport,
 };

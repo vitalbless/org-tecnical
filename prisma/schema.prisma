@@ -24,7 +24,7 @@ model User {
 
 model Request {
   id               Int      @id @default(autoincrement())
-  startDate        DateTime
+  startDate        DateTime  @default(now())
   orgTechType      String
   orgTechModel     String
   problemDescryption String

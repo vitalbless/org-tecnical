@@ -6,13 +6,34 @@ const prisma = new PrismaClient();
 exports.registerUser = async (req, res) => {
   try {
     const { fio, phone, login, password, type } = req.body;
-    const hashedPassword = await bcrypt.hash(password, 10);
-    const newUser = await prisma.user.create({
-      data: { fio, phone, login, password: hashedPassword, type },
+
+    const existingUser = await prisma.user.findUnique({
+      where: { login },
     });
-    res.status(201).json(newUser);
+
+    if (existingUser) {
+      return res
+        .status(400)
+        .json({ error: 'Пользователь с таким логином уже существует' });
+    }
+
+    const hashedPassword = await bcrypt.hash(password, 10);
+
+    const newUser = await prisma.user.create({
+      data: {
+        fio,
+        phone,
+        login,
+        password: hashedPassword,
+        type,
+      },
+    });
+
+    res
+      .status(201)
+      .json({ message: 'Пользователь успешно зарегистрирован', user: newUser });
   } catch (error) {
-    res.status(500).json({ error: 'Ошибка регистрации пользователя' });
+    res.status(500).json({ error: 'Ошибка при регистрации пользователя' });
   }
 };
 
