@@ -1,0 +1,51 @@
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+model User {
+  id       Int      @id @default(autoincrement())
+  fio      String
+  phone    String
+  login    String   @unique
+  password String
+  type     String
+
+  comments Comment[]
+
+  master Request[] @relation("MasterRequests")
+
+  client Request[] @relation("ClientRequests")
+}
+
+model Request {
+  id               Int      @id @default(autoincrement())
+  startDate        DateTime
+  orgTechType      String
+  orgTechModel     String
+  problemDescryption String
+  requestStatus    String
+  completionDate   DateTime?
+  repairParts      String?
+  
+  master     User?    @relation("MasterRequests", fields: [masterId], references: [id])
+  masterId   Int?
+
+  client     User     @relation("ClientRequests", fields: [clientId], references: [id])
+  clientId   Int
+
+  comments  Comment[]
+}
+
+model Comment {
+  id        Int      @id @default(autoincrement())
+  message   String
+  master    User     @relation(fields: [masterId], references: [id])
+  masterId  Int
+  request   Request  @relation(fields: [requestId], references: [id])
+  requestId Int
+}
