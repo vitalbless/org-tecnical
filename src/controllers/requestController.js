@@ -80,7 +80,7 @@ const generateReport = async (req, res) => {
   try {
     // Получаем выполненные заявки из базы данных
     const completedRequests = await prisma.request.findMany({
-      where: { requestStatus: 'Отложено' },
+      where: { requestStatus: 'Выполнено' },
     });
 
     if (!completedRequests || completedRequests.length === 0) {
