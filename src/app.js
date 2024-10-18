@@ -10,15 +10,12 @@ const app = express();
 app.use(cors());
 const PORT = process.env.PORT || 5000;
 
-// Middleware для парсинга JSON
 app.use(bodyParser.json());
 
-// Маршруты
 app.use('/api/users', userRoutes);
 app.use('/api/requests', requestRoutes);
 app.use('/api/comments', commentRoutes);
 
-// Запуск сервера
 app.listen(PORT, () => {
   console.log(`Сервер запущен на порту ${PORT}`);
 });

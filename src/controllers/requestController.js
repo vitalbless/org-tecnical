@@ -4,6 +4,23 @@ const ExcelJS = require('exceljs');
 const path = require('path');
 const fs = require('fs');
 
+
+const getAllRequests = async (req, res) => {
+  try {
+    const requests = await prisma.request.findMany({
+      include: {
+        comments: true,
+      },
+    });
+    if (requests.length === 0) {
+      return res.status(200).json({ message: 'Заявок нет' });
+    }
+    res.json(requests);
+  } catch (error) {
+    res.status(500).json({ error: 'Ошибка получения заявок' });
+  }
+};
+
 const createRequest = async (req, res) => {
   try {
     const { orgTechType, orgTechModel, problemDescryption } = req.body;
@@ -45,26 +62,28 @@ const updateRequest = async (req, res) => {
   try {
     const { id } = req.params;
     const { orgTechType, orgTechModel, problemDescryption } = req.body;
-    if ((req.user.type !== 'Мастер') & (req.user.type !== 'Менеджер')) {
-      return res.status(403).json({
-        error: 'Доступ запрещен.',
-      });
-    }
+    
     const updatedRequest = await prisma.request.update({
       where: { id: Number(id) },
       data: { orgTechType, orgTechModel, problemDescryption },
     });
     res.json(updatedRequest);
   } catch (error) {
-    res.status(500).json({ error: 'Ошибка обновления статуса заявки' });
+    res.status(500).json({ error: 'Ошибка обновления заявки' });
   }
 };
+
+
 
 const assignMasterToRequest = async (req, res) => {
   try {
     const { id } = req.params;
     const { masterId } = req.body;
-
+    if ((req.user.type !== 'Менеджер')) {
+      return res.status(403).json({
+        error: 'Доступ запрещен.',
+      });
+    }
     const updatedRequest = await prisma.request.update({
       where: { id: Number(id) },
       data: { masterId },
@@ -142,6 +161,7 @@ const generateReport = async (req, res) => {
 };
 
 module.exports = {
+  getAllRequests,
   createRequest,
   updateRequestStatus,
   updateRequest,

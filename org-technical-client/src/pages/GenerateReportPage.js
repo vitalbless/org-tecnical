@@ -5,13 +5,13 @@ import { generateReport } from '../api/requestApi';
 const GenerateReportPage = () => {
   const { user } = useContext(AuthContext);
   const [reportStatus, setReportStatus] = useState('');
-  const [reportLink, setReportLink] = useState('');
+
 
   const handleGenerateReport = async () => {
     try {
-      const response = await generateReport(user.token);
-      setReportStatus('Отчёт успешно создан.');
-      setReportLink(response.data.filePath);
+      await generateReport(user.token);
+      setReportStatus('Отчёт успешно сохранен на ваш компьютер.');
+
     } catch (error) {
       setReportStatus('Ошибка при создании отчёта.');
       console.error('Ошибка при создании отчёта:', error);
@@ -23,11 +23,6 @@ const GenerateReportPage = () => {
       <h2>Создание отчёта по выполненным заявкам</h2>
       <button onClick={handleGenerateReport}>Создать отчёт</button>
       {reportStatus && <p>{reportStatus}</p>}
-      {reportLink && (
-        <a href={reportLink} download>
-          Скачать отчёт
-        </a>
-      )}
     </div>
   );
 };

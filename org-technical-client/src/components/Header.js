@@ -9,9 +9,6 @@ const Header = () => {
     <header>
       <nav>
         <ul>
-          <li>
-            <Link to='/'>Главная</Link>
-          </li>
           {user ? (
             <>
               <li>
@@ -21,8 +18,11 @@ const Header = () => {
                 <Link to='/report'>Создать отчет</Link>
               </li>
               <li>
+              <Link to='/create-request'>Создать заявку</Link>
+              </li>
+              <li>
                 <span>
-                  {user.type}: {user.firstName} {user.lastName}
+                  {user.type}
                 </span>
               </li>
               <li>

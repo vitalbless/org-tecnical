@@ -12,14 +12,14 @@ export const AuthProvider = ({ children }) => {
     const token = localStorage.getItem('token');
     if (token) {
       const decodedUser = jwtDecode(token);
-      setUser(decodedUser);
+      setUser({ ...decodedUser, token }); // Добавляем токен к пользователю
     }
   }, []);
 
   const login = (token) => {
     localStorage.setItem('token', token);
     const decodedUser = jwtDecode(token);
-    setUser(decodedUser);
+    setUser({ ...decodedUser, token }); // Добавляем токен к пользователю
     navigate('/dashboard');
   };
 

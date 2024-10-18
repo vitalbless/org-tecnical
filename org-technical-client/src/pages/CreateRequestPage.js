@@ -11,6 +11,7 @@ const CreateRequestPage = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
+      
       await createRequest(
         { orgTechType, orgTechModel, problemDescryption },
         user.token
@@ -39,12 +40,12 @@ const CreateRequestPage = () => {
           onChange={(e) => setOrgTechModel(e.target.value)}
           required
         />
-        <textarea
+        <input
           placeholder='Описание проблемы'
           value={problemDescryption}
           onChange={(e) => setProblemDescryption(e.target.value)}
           required
-        ></textarea>
+        ></input>
         <button type='submit'>Создать заявку</button>
       </form>
     </div>
